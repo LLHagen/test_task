@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\IndexController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,13 +17,10 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/tasks/{id}/download', [TaskController::class, 'download'])->name('tasks.download');
+    Route::resource('tasks', TaskController::class);
+    Route::get('/', [IndexController::class, 'index'])->name('home');
 });
 
 Route::get('/dashboard', function () {
